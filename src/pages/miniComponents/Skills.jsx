@@ -55,7 +55,7 @@ const Skills = () => {
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
 
         {skills.map((skill, i) => {
-          const pct = skill.percentage || Math.floor(Math.random() * 30) + 70;
+          const pct = Number(skill.proficiency) || 0;
 
           return (
             <motion.div
