@@ -64,7 +64,7 @@ const Timeline = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-center text-3xl md:text-5xl font-extrabold mt-4"
           >
-            Client <span className="text-sky-500">Testimonials</span>
+             <span className="text-sky-500">Testimonials</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
