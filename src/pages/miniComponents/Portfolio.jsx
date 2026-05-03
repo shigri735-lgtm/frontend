@@ -175,12 +175,12 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, ArrowRight, Github } from "lucide-react";
+import { ArrowRight, Github } from "lucide-react";
 
 const filters = [
   { name: "All", icon: "🌐" },
-  { name: "MERN", icon: "⚛️" },
-  { name: "Data Science", icon: "🤖" },
+  { name: "Mate Ads", icon: "⚛️" },
+  { name: "Google Ads", icon: "🤖" },
 ];
 
 const Portfolio = () => {
@@ -188,13 +188,37 @@ const Portfolio = () => {
   const [filter, setFilter] = useState("All");
   const [activeIndex, setActiveIndex] = useState(0);
 
+  const fallbackProjects = [
+    {
+      _id: "p-1",
+      title: "Product Launch Campaign",
+      description: "Designed a growth engine for faster user acquisition and stronger conversion.",
+      category: "Mate Ads",
+      projectBanner: { url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1200&q=80" },
+      githubUrl: "https://github.com/"
+    },
+    {
+      _id: "p-2",
+      title: "Data Intelligence Dashboard",
+      description: "Visualized performance metrics for quick stakeholder decision-making.",
+      category: "Google Ads",
+      projectBanner: { url: "https://images.unsplash.com/photo-1517511620798-cec17d428bc0?auto=format&fit=crop&w=1200&q=80" },
+      githubUrl: "https://github.com/"
+    }
+  ];
+
   useEffect(() => {
     const getMyProjects = async () => {
-      const { data } = await axios.get(
-        "https://backend-beta-ruby-13.vercel.app/api/v1/project/getall",
-        { withCredentials: true }
-      );
-      setProjects(data.projects);
+      try {
+        const { data } = await axios.get(
+          "https://backend-beta-ruby-13.vercel.app/api/v1/project/getall",
+          { withCredentials: true }
+        );
+        setProjects(data.projects || fallbackProjects);
+      } catch (error) {
+        console.warn("Project fetch failed, using fallback projects", error.message);
+        setProjects(fallbackProjects);
+      }
     };
     getMyProjects();
   }, []);
@@ -206,191 +230,101 @@ const Portfolio = () => {
           p.category?.toLowerCase().includes(filter.toLowerCase())
         );
 
-  const handleNext = () => {
-    setActiveIndex((prev) => (prev + 1) % filteredProjects.length);
-  };
-
-  const handlePrev = () => {
-    setActiveIndex((prev) =>
-      (prev - 1 + filteredProjects.length) % filteredProjects.length
-    );
-  };
-
-  const getCardStyle = (index) => {
-    const len = filteredProjects.length;
-    if (len === 0) return { opacity: 0 };
-
-    const prevIndex = (activeIndex - 1 + len) % len;
-    const nextIndex = (activeIndex + 1) % len;
-
-    if (index === activeIndex)
-      return {
-        left: "50%",
-        x: "-50%",
-        scale: 1,
-        opacity: 1,
-        zIndex: 30,
-        y: 0,
-      };
-
-    if (index === prevIndex)
-      return {
-        left: "28%",
-        x: "-50%",
-        scale: 0.85,
-        opacity: 0.45,
-        zIndex: 20,
-        y: 10,
-      };
-
-    if (index === nextIndex)
-      return {
-        left: "72%",
-        x: "-50%",
-        scale: 0.85,
-        opacity: 0.45,
-        zIndex: 20,
-        y: 10,
-      };
-
-    return {
-      left: "50%",
-      x: "-50%",
-      scale: 0.6,
-      opacity: 0,
-      zIndex: 10,
-      y: 0,
-    };
-  };
-
   return (
-    <section className="relative min-h-screen overflow-hidden  text-white px-6 md:px-12 py-20">
+    <section id="project" className="relative min-h-screen overflow-hidden text-white px-6 md:px-12 py-20">
       <div className="absolute inset-0 opacity-5" style={{backgroundImage:'linear-gradient(to right,#fff 1px,transparent 1px),linear-gradient(to bottom,#fff 1px,transparent 1px)',backgroundSize:'60px 60px'}} />
-      <div className="absolute top-24 left-1/4 w-2 h-2 rounded-full bg-orange-500 shadow-[0_0_20px_#f97316]" />
-      <div className="absolute top-1/3 right-1/4 w-2 h-2 rounded-full bg-orange-500 shadow-[0_0_20px_#f97316]" />
+      <div className="relative z-10 max-w-6xl mx-auto">
+        <div className="text-center mb-14">
+          <p className="uppercase text-xs tracking-[6px] text-sky-400 mb-2 font-sans">✦ My Work</p>
+          <h1 className="text-4xl md:text-5xl font-serif font-semibold">
+            My <span className="text-sky-500">Projects</span>
+          </h1>
+          <p className="mt-4 text-gray-400 max-w-2xl mx-auto text-sm md:text-base">
+            A simple portfolio grid with clean white borders, blue accents, and classic layout.
+          </p>
+        </div>
 
-      <div className="relative z-10 text-center mb-14">
-        <p className="uppercase text-xs tracking-[6px] text-orange-400 mb-3">✦ My Work</p>
-        <h1 className="text-4xl md:text-6xl font-extrabold">Selected <span className="text-orange-500">Projects</span></h1>
-      </div>
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
+          {filters.map((item) => (
+            <motion.button
+              key={item.name}
+              type="button"
+              onClick={() => { setFilter(item.name); setActiveIndex(0); }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`inline-flex items-center gap-2 rounded-full border px-5 py-3 text-sm font-medium transition-all duration-300 ${
+                filter === item.name
+                  ? 'border-sky-500 bg-sky-500/20 text-white shadow-[0_0_25px_rgba(56,189,248,0.25)]'
+                  : 'border-white/10 text-slate-300 hover:border-sky-500 hover:text-white'
+              }`}
+            >
+              <span className="text-base">{item.icon}</span>
+              <span className="font-serif">{item.name}</span>
+            </motion.button>
+          ))}
+        </div>
 
-      <div className="flex justify-center gap-3 mb-12 flex-wrap relative z-10">
-        {filters.map((item) => (
-          <motion.button
-            key={item.name}
-            type="button"
-            onClick={() => {setFilter(item.name);setActiveIndex(0);}}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className={`px-6 py-3 rounded-full border-2 text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
-              filter === item.name
-                ? 'bg-orange-500 border-orange-500 text-white shadow-[0_0_20px_rgba(249,115,22,0.5)]'
-                : 'border-orange-400/50 text-orange-400 hover:border-orange-400'
-            }`}
+        {filteredProjects.length === 0 ? (
+          <motion.div
+            key="no-projects"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative overflow-hidden rounded-[32px] border border-white/10 bg-slate-950/90 p-14 text-center shadow-2xl"
           >
-            <span className="text-lg">{item.icon}</span>
-            {item.name}
-            {filter === item.name && <span className="ml-1 text-xs bg-orange-600 px-2 py-0.5 rounded-full">{filteredProjects.length}</span>}
-          </motion.button>
-        ))}
-      </div>
-
-      {filteredProjects.length === 0 ? (
-        <motion.div
-          key="no-projects"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          className="relative h-[420px] w-full max-w-[1100px] mx-auto rounded-[30px] border border-orange-500/30 bg-gradient-to-br from-zinc-950 to-zinc-900/50 flex items-center justify-center text-center px-6 backdrop-blur-sm"
-        >
-          <div>
-            <p className="text-orange-500 uppercase tracking-[6px] mb-3 text-sm font-semibold">No projects found</p>
-            <h2 className="text-3xl font-bold text-white mb-2">No {filter} Projects Yet</h2>
-            <p className="text-gray-400">Try selecting a different filter or check back soon for more projects.</p>
-          </div>
-        </motion.div>
-      ) : (
-        <motion.div
-          key="projects-carousel"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="relative h-[520px] w-full max-w-[1500px] mx-auto">
-            {filteredProjects.map((element,index)=>(
+            <p className="text-sky-500 uppercase tracking-[0.35em] mb-3 text-sm font-semibold">No projects found</p>
+            <h2 className="text-3xl font-serif font-semibold text-white mb-3">No {filter} Projects Yet</h2>
+            <p className="text-gray-400 max-w-2xl mx-auto">Try another filter or check back later for new work.</p>
+          </motion.div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filteredProjects.map((element, index) => (
               <motion.div
                 key={element._id}
-                animate={getCardStyle(index)}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="absolute top-0 w-[300px] sm:w-[360px] md:w-[520px] lg:w-[620px] h-full rounded-[30px] overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl cursor-pointer"
-                onClick={()=>setActiveIndex(index)}
+                whileHover={{ y: -6 }}
+                transition={{ duration: 0.3 }}
+                className={`group relative overflow-hidden rounded-[28px] border border-white/10 bg-slate-950/90 shadow-2xl transition-all duration-300 ${
+                  activeIndex === index ? 'border-sky-500 shadow-[0_0_40px_rgba(56,189,248,0.2)]' : ''
+                }`}
+                onClick={() => setActiveIndex(index)}
               >
-                <img src={element.projectBanner?.url} alt={element.title} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-                {index===activeIndex && (
-                  <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 flex justify-between items-end gap-4">
-                    <div>
-                      <span className="text-xs px-3 py-1 rounded-full bg-orange-500/20 text-orange-400 border border-orange-400/30">{element.category}</span>
-                      <h2 className="text-3xl md:text-5xl font-bold mt-3">{element.title}</h2>
-                      <p className="text-gray-300 mt-2 line-clamp-2 max-w-xl">{element.description}</p>
-                    </div>
-                    <div className="flex gap-3">
-                      <a href={element.githubUrl} target="_blank" rel="noreferrer" className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center"><Github size={20} /></a>
-                      <Link to={`/project/${element._id}`} className="w-14 h-14 rounded-full bg-orange-500 flex items-center justify-center"><ArrowRight size={22} /></Link>
-                    </div>
+                <div className="h-72 overflow-hidden">
+                  <img
+                    src={element.projectBanner?.url}
+                    alt={element.title}
+                    className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
+                  />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
+                <div className="relative p-6">
+                  <span className="inline-flex items-center rounded-full border border-sky-500/20 bg-sky-500/10 px-3 py-1 text-xs uppercase tracking-[0.3em] text-sky-300">
+                    {element.category || 'Project'}
+                  </span>
+                  <h3 className="mt-5 text-2xl font-serif font-semibold text-white">{element.title}</h3>
+                  <p className="mt-3 text-sm text-gray-400 leading-7 line-clamp-3">
+                    {element.description}
+                  </p>
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <a
+                      href={element.githubUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-sky-200 transition hover:bg-sky-500/20"
+                    >
+                      <Github size={18} /> GitHub
+                    </a>
+                    <Link
+                      to={`/project/${element._id}`}
+                      className="inline-flex items-center gap-2 rounded-full bg-sky-500 px-4 py-3 text-sm font-medium text-white transition hover:bg-sky-400"
+                    >
+                      View <ArrowRight size={18} />
+                    </Link>
                   </div>
-                )}
+                </div>
               </motion.div>
             ))}
           </div>
-
-          <div className="mt-10 flex flex-col items-center gap-6 relative z-20">
-            <div className="flex justify-center items-center gap-8">
-              <motion.button
-                type="button"
-                onClick={handlePrev}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-14 h-14 rounded-full border-2 border-orange-500 bg-orange-500/10 flex items-center justify-center transition-all hover:bg-orange-500/20 hover:shadow-[0_0_20px_rgba(249,115,22,0.4)]"
-              >
-                <ChevronLeft size={28} className="text-orange-500" />
-              </motion.button>
-
-              <div className="flex gap-2">
-                {filteredProjects.map((_,idx)=>(
-                  <motion.button
-                    key={idx}
-                    type="button"
-                    onClick={()=>setActiveIndex(idx)}
-                    whileHover={{ scale: 1.15 }}
-                    className={activeIndex===idx?'w-8 h-2 bg-orange-500 rounded-full shadow-[0_0_15px_rgba(249,115,22,0.6)]':'w-2 h-2 bg-zinc-600 rounded-full hover:bg-zinc-500'}
-                  />
-                ))}
-              </div>
-
-              <motion.button
-                type="button"
-                onClick={handleNext}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-14 h-14 rounded-full border-2 border-orange-500 bg-orange-500/10 flex items-center justify-center transition-all hover:bg-orange-500/20 hover:shadow-[0_0_20px_rgba(249,115,22,0.4)]"
-              >
-                <ChevronRight size={28} className="text-orange-500" />
-              </motion.button>
-            </div>
-            {filteredProjects.length > 1 && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-sm text-gray-300"
-              >
-                Next: <span className="text-orange-400 font-semibold">{filteredProjects[(activeIndex + 1) % filteredProjects.length]?.title}</span>
-              </motion.p>
-            )}
-          </div>
-        </motion.div>
-      )}
+        )}
+      </div>
     </section>
   );
 };

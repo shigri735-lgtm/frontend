@@ -193,7 +193,7 @@ import avatar from "../../../assets/img1.png";
 
 const About = () => {
   return (
-    <section className="w-full px-6 md:px-12 py-24  text-white overflow-hidden">
+    <section id="about" className="w-full px-6 md:px-12 py-24  text-white overflow-hidden">
       {/* Heading */}
       <motion.div
         initial={{ opacity: 0, y: -40 }}
@@ -219,7 +219,7 @@ const About = () => {
           initial={{ opacity: 0, x: -80 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          className="flex justify-center relative"
+          className="flex justify-center relative overflow-hidden"
         >
           <div className="relative backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-4 shadow-2xl">
             <img
@@ -244,14 +244,14 @@ const About = () => {
           <motion.div
             animate={{ y: [0, 10, 0] }}
             transition={{ repeat: Infinity, duration: 3 }}
-            className="absolute bottom-0 -left-10 bg-[#111827] px-4 py-2 rounded-lg border border-blue-400 text-sm shadow-lg"
+            className="absolute bottom-0 left-0 md:-left-10 bg-[#111827] px-4 py-2 rounded-lg border border-blue-400 text-sm shadow-lg"
           >
             🟩 PPC Expert
           </motion.div>
           <motion.div
             animate={{ y: [0, 10, 0] }}
             transition={{ repeat: Infinity, duration: 3 }}
-            className="absolute bottom-0 right-[-40px] bg-[#111827] px-4 py-2 rounded-lg border border-blue-400 text-sm shadow-lg"
+            className="absolute bottom-0 right-0 md:right-[-40px] bg-[#111827] px-4 py-2 rounded-lg border border-blue-400 text-sm shadow-lg"
           >
            Ads Specialist
           </motion.div>
@@ -274,14 +274,14 @@ const About = () => {
           <motion.div
             animate={{ y: [0, 10, 0] }}
             transition={{ repeat: Infinity, duration: 3 }}
-            className="absolute top-[40%] left-[-40px]  bg-[#111827] px-4 py-2 rounded-lg border border-blue-400 text-sm shadow-lg"
+            className="absolute top-[40%] left-0 md:left-[-40px]  bg-[#111827] px-4 py-2 rounded-lg border border-blue-400 text-sm shadow-lg"
           >
             🚀 Creative Strategist
           </motion.div>
           <motion.div
             animate={{ y: [0, 10, 0] }}
             transition={{ repeat: Infinity, duration: 3 }}
-            className="absolute top-[40%] right-[-60px]  bg-[#111827] px-4 py-2 rounded-lg border border-blue-400 text-sm shadow-lg"
+            className="absolute top-[40%] right-0 md:right-[-60px]  bg-[#111827] px-4 py-2 rounded-lg border border-blue-400 text-sm shadow-lg"
           >
             💻Content Creator
           </motion.div>

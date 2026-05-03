@@ -161,85 +161,51 @@
 // };
 
 // export default Hero;
-import React, { useEffect, useState } from "react";
-import {
-  Facebook,
-  Github,
-  Instagram,
-  Linkedin,
-  Twitter,
-  Quote,
-  ArrowUpRight,
-  Megaphone,
-  Sparkles,
-  Rocket,
-  Smartphone
-} from "lucide-react";
-import axios from "axios";
-import { motion } from "framer-motion";
-import picture from "../../../assets/img1.png"
-
-// Fallback image if the local import fails in the preview environment
-const fallbackPic = {picture};
-
-
-// Extracted words array to prevent recreation on every render
-const TYPED_WORDS = [
-  "Digital Marketer",
-  "Performance marketer",
-  "Ads Specialist",
-  "Social Media Manager",
-  "PPC Expert",
-  "Brand & Marketer",
-  "Creative Strategist",
-  "Content Creator",
-  "Growth Hacker",
-  "Marketing Enthusiast",
-  
-];
-
-// Custom Typewriter Hook to replace the missing external library
-const useTypewriter = (words, typingSpeed = 70, deletingSpeed = 40, delay = 1500) => {
-  const [text, setText] = useState('');
-  const [wordIndex, setWordIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  useEffect(() => {
-    // Avoid running the effect if words array is empty or undefined
-    if (!words || words.length === 0) return;
-
-    const currentWord = words[wordIndex];
-    let timeoutId;
-
-    if (isDeleting) {
-      timeoutId = setTimeout(() => {
-        setText(currentWord.substring(0, text.length - 1));
-        if (text === '') {
-          setIsDeleting(false);
-          setWordIndex((prev) => (prev + 1) % words.length);
-        }
-      }, deletingSpeed);
-    } else {
-      timeoutId = setTimeout(() => {
-        setText(currentWord.substring(0, text.length + 1));
-        if (text === currentWord) {
-          timeoutId = setTimeout(() => setIsDeleting(true), delay);
-        }
-      }, typingSpeed);
-    }
-    return () => clearTimeout(timeoutId);
-  }, [text, isDeleting, wordIndex, words, typingSpeed, deletingSpeed, delay]);
-
-  return text;
-};
+import React, { useState, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  ArrowRight, 
+  Menu, 
+  X, 
+  Instagram, 
+  Facebook, 
+  Linkedin, 
+  Twitter, 
+  Github 
+} from 'lucide-react';
+import axios from 'axios';
+import pic from "../../../assets/img1.png";
 
 const Hero = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [index, setIndex] = useState(0);
+  const [displayText, setDisplayText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  
+  // Data Fetching State
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
-  
-  // HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL EARLY RETURNS
-  const typedText = useTypewriter(TYPED_WORDS);
 
+  // Fallback Data in case the API fails
+  const fallbackUser = {
+    fullName: "Muhammad M Noori",
+    experience: "3",
+    avatar: {pic},
+    instagramURL: "https://www.instagram.com/",
+    facebookURL: "https://www.facebook.com/",
+    linkedInURL: "https://www.linkedin.com/",
+    twitterURL: "https://twitter.com/",
+    githubURL: "https://github.com/"
+  };
+
+  const navItems = [
+    { label: 'Philosophy', href: '#about' },
+    { label: 'Case Studies', href: '#project' },
+    { label: 'Services', href: '#myapp' },
+    { label: 'Testimonials', href: '#timeline' }
+  ];
+
+  // API Fetching Logic with robust error handling
   useEffect(() => {
     const getMyProfile = async () => {
       try {
@@ -247,266 +213,250 @@ const Hero = () => {
           "https://backend-beta-ruby-13.vercel.app/api/v1/user/portfolio/me",
           { withCredentials: true }
         );
-        setUser(data?.user || {});
+        
+        if (data && data.user) {
+          setUser(data.user);
+        } else {
+          setUser(fallbackUser);
+        }
       } catch (error) {
-        console.log(error);
-        setUser({});
+        console.warn("API call failed, using fallback data:", error.message);
+        setUser(fallbackUser);
       } finally {
         setLoading(false);
       }
     };
-
     getMyProfile();
   }, []);
 
-  // Early return comes AFTER all hooks (useState, useEffect, useTypewriter)
+  const phrases = useMemo(() => [
+    "Vanity metrics won't.",
+    "Cheap traffic won't.",
+    "Wasting ad spend won't.",
+    "Hope-based strategies won't.",
+    "Predictable growth systems will."
+  ], []);
+
+  // Typewriter Logic
+  useEffect(() => {
+    const currentPhrase = phrases[index];
+    const speed = isDeleting ? 40 : 80;
+
+    const timer = setTimeout(() => {
+      if (!isDeleting && displayText === currentPhrase) {
+        setTimeout(() => setIsDeleting(true), 1500);
+      } else if (isDeleting && displayText === '') {
+        setIsDeleting(false);
+        setIndex((prev) => (prev + 1) % phrases.length);
+      } else {
+        setDisplayText(currentPhrase.substring(0, isDeleting ? displayText.length - 1 : displayText.length + 1));
+      }
+    }, speed);
+
+    return () => clearTimeout(timer);
+  }, [displayText, isDeleting, index, phrases]);
+
+  // Framer Motion Variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.2, delayChildren: 0.3 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: "easeOut" } }
+  };
+
   if (loading) {
     return (
-      <div className="w-full h-screen flex flex-col items-center justify-center  text-white font-['Inter']">
+      <div className="w-full h-screen flex flex-col items-center justify-center bg-[#0a0a0a] text-white">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-          className="w-12 h-12 border-4 border-[#3b82f6] border-t-transparent rounded-full mb-4"
+          className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full mb-4"
         />
-        <p className="font-medium tracking-widest text-sm uppercase text-zinc-400">Loading Profile...</p>
+        <p className="text-[#a1a1aa] uppercase tracking-widest text-xs">Loading Profile...</p>
       </div>
     );
   }
 
-  const name ="Muhamd M Noori";
-
-  // Animation Variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.2, delayChildren: 0.1 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 80, damping: 15 } },
-  };
-
-  const floatingVariants = (delay = 0, yOffset = 15) => ({
-    hidden: { opacity: 0, scale: 0.5 },
-    show: {
-      opacity: 1,
-      scale: 1,
-      transition: { type: "spring", stiffness: 100, damping: 10, delay },
-    },
-    float: {
-      y: [0, -yOffset, 0],
-      rotate: [0, 2, -2, 0],
-      transition: {
-        duration: 4,
-        repeat: Infinity,
-        ease: "easeInOut",
-        delay: delay,
-      },
-    },
-  });
-
   return (
-    <section className="relative  min-h-screen  text-white overflow-hidden flex flex-col items-center justify-center py-16 px-4 md:px-8 font-sans">
-      {/* CSS for Background Noise & Fonts */}
-      <style>
-        {`
-          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&display=swap');
-          section {
-            font-family: 'Inter', sans-serif;
-          }
-          .bg-noise {
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
-          }
-          .custom-outline {
-            filter: drop-shadow(0px 0px 10px rgba(255, 255, 255, 0.1)) drop-shadow(0px 10px 20px rgba(0,0,0,0.5));
-          }
-        `}
-      </style>
-      <div className="bg-noise"></div>
+    <div className="min-h-screen  text-white font-sans selection:bg-blue-600 selection:text-white overflow-x-hidden">
+      
+      {/* Background Ambient Glow (Updated to Blue) */}
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vw] h-[50vw] bg-[radial-gradient(circle,rgba(59,130,246,0.08)_0%,rgba(10,10,10,0)_70%)] pointer-events-none z-0" />
 
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-        className="relative z-10 w-full max-w-6xl mx-auto flex flex-col items-center"
+      {/* Navigation */}
+      <motion.nav 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: "easeOut" }}
+        className="relative z-50 flex items-center justify-between px-6 py-4 md:px-12 max-w-screen-2xl mx-auto bg-[#02060d]/70 backdrop-blur-xl border-b border-white/10"
       >
-        {/* Top Hello Badge */}
-        <motion.div variants={itemVariants} className="mb-6 relative">
-          <div className="px-6 py-2 border border-zinc-700 rounded-full text-sm font-medium tracking-wide bg-[#1A1A1A]/50 backdrop-blur-sm text-zinc-300">
-            Hello!
-          </div>
-            
-          {/* Decorative lines */}
-          <svg className="absolute -left-12 top-4 w-8 h-8 text-[#3b82f6] opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M5 5L10 10M2 12H8M5 19L10 14" />
-          </svg>
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="text-xl font-serif italic tracking-wide"
+        >
+          {user?.fullName?.split(' ')[0] || "Noori"}.
         </motion.div>
 
-        {/* Main Headline */}
-        <motion.div variants={itemVariants} className="text-center z-20">
-          <h1 className="text-4xl md:text-[80px] font-black tracking-tight text-white flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4 leading-none">
-            <span>I'm {name}</span>
-          
-            <span className="hidden md:inline text-white">,</span>
-          </h1>
-          <h2 className="text-3xl md:text-5xl lg:text-[56px] font-extrabold mt-4 text-white tracking-tight leading-none">
-            {" "}
-            <span className="text-[#3b82f6]">
-              {typedText}
-              <span className="text-[#3b82f6] animate-pulse font-normal ml-1">|</span>
-            </span>
-          </h2>
-        </motion.div>
+        <div className="hidden md:flex items-center gap-10 text-sm font-medium text-[#a1a1aa]">
+          {navItems.map((item) => (
+            <a key={item.label} href={item.href} className="relative group transition-all duration-300 hover:text-white font-sans">
+              <span className="relative z-10">{item.label}</span>
+              <span className="absolute left-0 -bottom-1 h-[1px] w-0 bg-blue-500 transition-all duration-300 group-hover:w-full" />
+            </a>
+          ))}
+          <button className="px-6 py-2.5 border border-white/20 rounded-full hover:bg-blue-600 hover:border-blue-600 hover:text-white transition-all duration-300 font-sans font-medium">
+            Book a Call
+          </button>
+        </div>
 
-        {/* Center Illustration Area */}
-        <div className="relative w-full max-w-4xl mt-12 md:mt-24 flex flex-col md:flex-row items-center justify-center">
+        <button className="md:hidden text-white p-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-300" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+        </button>
+      </motion.nav>
+
+      {/* Hero Section */}
+      <main className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-6 md:px-12 max-w-screen-2xl mx-auto pt-6 lg:pt-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 w-full items-center">
           
-          {/* Left Content (Desktop: Absolute, Mobile: Stacked) */}
+          {/* Content Left */}
           <motion.div 
-            variants={itemVariants}
-            className="w-full md:w-auto md:absolute md:left-0 md:top-1/2 md:-translate-y-1/2 z-20 mb-8 md:mb-0 px-6 md:px-0 text-center md:text-left max-w-[280px]"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="lg:col-span-7 flex flex-col justify-center"
           >
-            <Quote className="w-8 h-8 text-zinc-600 mb-4 mx-auto md:mx-0 fill-current opacity-40" />
-            <p className="text-white md:text-lg text-zinc-400 font-medium leading-relaxed tracking-wide">
-              working closely with <span className="text-white font-bold">{name}</span>, and I can confidently say he is an exceptional professional and strategist.
-            </p>
+            <motion.div variants={itemVariants} className="inline-flex items-center gap-3 mb-8">
+              <div className="h-[1px] w-8 bg-blue-500" />
+              <span className="text-blue-500 text-sm font-medium tracking-widest uppercase font-sans">Lead Growth Strategist</span>
+            </motion.div>
+
+            <motion.h1 variants={itemVariants} className="font-serif text-8xl md:text-6xl lg:text-7xl leading-[1.1] mb-8 min-h-[140px] md:min-h-[160px]">
+              Random marketing <br />
+              <span className="text-8xl text-[#a1a1aa]">won't scale your brand.</span> <br />
+              <div className="min-h-[1.2em] relative">
+                <span className="absolute top-0 left-0 text-blue-500 font-serif text-4xl md:text-4xl lg:text-4xl leading-[1.1] whitespace-nowrap">
+                  {displayText}
+                </span>
+                
+              </div>
+            </motion.h1>
+
+            <motion.div variants={itemVariants} className="border-l-2 border-white/10 pl-6 mb-10 max-w-xl">
+              <p className="text-lg md:text-xl text-gray-300 font-light leading-relaxed font-sans">
+                Visibility and engagement are the baseline—profitability is the goal. I specialize in bridging the gap between high-reach marketing and measurable business growth. <br/><br/>
+                By engineering <span className="text-white font-medium">data-driven performance engines</span>, I ensure every marketing dollar spent is an investment toward sustainable revenue.
+              </p>
+            </motion.div>
+
+            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+              <button className="group relative flex items-center justify-center gap-2 border border-white/30 text-white px-8 py-4 rounded-full font-medium overflow-hidden transition-all active:scale-95 font-sans">
+                <div className="absolute inset-0 bg-blue-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-0" />
+                <span className="relative z-10 group-hover:text-white transition-colors duration-300">Get a Free Marketing Audit</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform relative z-10" />
+              </button>
+              
+              {/* Dynamic Social Icons (Updated to Blue) */}
+              {/* <div className="flex gap-5 bg-white/5 backdrop-blur-md px-5 py-2.5 rounded-full border border-white/10">
+                <a href={user?.instagramURL || "https://www.instagram.com/"} target="_blank" rel="noreferrer" className="hover:scale-110 transition-transform">
+                  <Instagram size={18} className="text-blue-500" />
+                </a>
+                <a href={user?.facebookURL || "https://www.facebook.com/"} target="_blank" rel="noreferrer" className="hover:scale-110 transition-transform">
+                  <Facebook size={18} className="text-blue-500" />
+                </a>
+                <a href={user?.linkedInURL || "https://www.linkedin.com/"} target="_blank" rel="noreferrer" className="hover:scale-110 transition-transform">
+                  <Linkedin size={18} className="text-blue-500" />
+                </a>
+                <a href={user?.twitterURL || "https://twitter.com/"} target="_blank" rel="noreferrer" className="hover:scale-110 transition-transform">
+                  <Twitter size={18} className="text-blue-500" />
+                </a>
+                <a href={user?.githubURL || "https://github.com/"} target="_blank" rel="noreferrer" className="hover:scale-110 transition-transform">
+                  <Github size={18} className="text-blue-500" />
+                </a>
+              </div> */}
+            </motion.div>
+
+            {/* Trust Metrics */}
+            <motion.div variants={itemVariants} className="mt-16 grid grid-cols-2 md:grid-cols-3 gap-8 border-t border-white/10 pt-8 max-w-2xl">
+                <div>
+                    <p className="text-3xl font-serif mb-1">Direct</p>
+                    <p className="text-xs text-[#a1a1aa] uppercase tracking-wider font-sans">Expert Communication</p>
+                </div>
+                <div>
+                    <p className="text-3xl font-serif mb-1 text-blue-500">{user?.experience || "3"}+ Years</p>
+                    <p className="text-xs text-[#a1a1aa] uppercase tracking-wider font-sans">Marketing Expertise</p>
+                </div>
+                <div className="hidden md:block">
+                    <p className="text-3xl font-serif mb-1">Elite</p>
+                    <p className="text-xs text-[#a1a1aa] uppercase tracking-wider font-sans">Tailored Execution</p>
+                </div>
+            </motion.div>
           </motion.div>
 
-          {/* Core Image & Shapes */}
-          <div className="relative flex justify-center items-end h-[350px] md:h-[450px] w-full max-w-[350px] md:max-w-[450px] z-10">
-            {/* Blue Semi Circle */}
-            <motion.div 
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: "spring", duration: 1.5, bounce: 0.4 }}
-              className="absolute bottom-0 w-full h-[70%] md:h-[75%] bg-[#3b82f6] rounded-t-full shadow-inner"
-            ></motion.div>
-
-            {/* Profile Image */}
-            <motion.img
-              initial={{ y: 100, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ type: "spring", stiffness: 70, damping: 15, delay: 0.3 }}
-              src={user?.avatar?.url || fallbackPic}
-              alt={name}
-              className="relative z-10 w-[85%] md:w-[90%] h-auto max-h-[120%] object-cover object-bottom custom-outline pointer-events-none"
-            />
-
-            {/* Floating Badges */}
-            <motion.div
-              variants={floatingVariants(0.2, 10)}
-              initial="hidden"
-              animate={["show", "float"]}
-              className="absolute top-10 md:top-20 -left-6 md:-left-12 bg-[#1A1A1A] text-white px-4 py-2 md:px-5 md:py-2.5 rounded-full flex items-center gap-2 shadow-xl z-20 whitespace-nowrap border border-white/10"
-            >
-              <Megaphone className="w-4 h-4 md:w-5 md:h-5 text-gray-300" />
-              <span className="font-semibold text-sm md:text-base tracking-wide">Marketing</span>
-            </motion.div>
-
-            <motion.div
-              variants={floatingVariants(0.5, 15)}
-              initial="hidden"
-              animate={["show", "float"]}
-              className="absolute top-70 md:top-82 -left-4 md:-left-8 bg-[#1A1A1A] text-white px-4 py-2 md:px-5 md:py-2.5 rounded-full flex items-center gap-2 shadow-xl z-20 whitespace-nowrap border border-white/10"
-            >
-              <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-yellow-400" />
-              <span className="font-semibold  text-sm md:text-base tracking-wide">Branding</span>
-            </motion.div>
-
-            <motion.div
-              variants={floatingVariants(0.8, 12)}
-              initial="hidden"
-              animate={["show", "float"]}
-              className="absolute top-20 md:top-32 -right-4 md:-right-8 bg-[#1A1A1A] text-white px-4 py-2 md:px-5 md:py-2.5 rounded-full flex items-center gap-2 shadow-xl z-20 whitespace-nowrap border border-white/10"
-            >
-              <Rocket className="w-4 h-4 md:w-5 md:h-5 text-[#3b82f6]" />
-              <span className="font-semibold text-sm md:text-base tracking-wide">Ads</span>
-            </motion.div>
-
-            <motion.div
-              variants={floatingVariants(1.1, 8)}
-              initial="hidden"
-              animate={["show", "float"]}
-              className="absolute bottom-10 md:bottom-20 -right-8 md:-right-16 bg-[#1A1A1A] text-white px-4 py-2 md:px-5 md:py-2.5 rounded-full flex items-center gap-2 shadow-xl z-20 whitespace-nowrap border border-white/10"
-            >
-              <Smartphone className="w-4 h-4 md:w-5 md:h-5 text-blue-400" />
-              <span className="font-semibold text-sm md:text-base tracking-wide">Social Media</span>
-            </motion.div>
-          </div>
-
-          {/* Right Content (Desktop: Absolute, Mobile: Stacked) */}
+          {/* Image Right */}
           <motion.div 
-            variants={itemVariants}
-            className="w-full md:w-auto md:absolute md:right-0 md:top-1/2 md:-translate-y-1/2 z-20 mt-8 md:mt-0 text-center md:text-right max-w-[200px]"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 }}
+            className="lg:col-span-5 relative h-[500px] lg:h-[80vh] w-full mt-10 lg:mt-0"
           >
-            <h3 className="text-4xl md:text-5xl font-black text-white mb-1 tracking-tight">
-              {user?.experience || "3"} <span className="text-2xl md:text-3xl text-[#3b82f6]">Years</span>
-            </h3>
-            <p className="text-sm md:text-base text-zinc-400 font-medium tracking-wide">
-              in Digital Marketing & Performance Marketing
-            </p>
+              <div className="w-full h-full relative rounded-2xl overflow-hidden group" style={{
+                  maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)'
+              }}>
+                <img 
+                  src={pic} 
+                  alt="Lead Strategist"
+                  className="w-full h-full object-cover object-top grayscale hover:grayscale-0 transition-all duration-700 ease-in-out scale-100 group-hover:scale-105"
+                />
+                
+                <div className="absolute bottom-10 left-8 z-20 font-sans">
+                    <div className="bg-[#0a0a0a]/80 backdrop-blur-md px-4 py-2 rounded-lg border border-white/10">
+                        <p className="text-sm font-medium text-white">Hi, I'm {user?.fullName || "Akbar Ali"} 👋</p>
+                        <p className="text-xs text-blue-500 font-semibold uppercase tracking-widest">Growth Expert</p>
+                    </div>
+                </div>
+              </div>
           </motion.div>
 
         </div>
+      </main>
 
-        {/* Bottom Actions */}
-        <motion.div variants={itemVariants} className="mt-12 md:mt-16 flex flex-col items-center gap-8 z-30 relative">
-          
-          {/* Toggle-style Buttons */}
-          <div className="bg-[#1A1A1A] p-1.5 rounded-full flex items-center shadow-2xl border border-white/10">
-            <a 
-              href="#portfolio"
-              className="bg-[#3b82f6] text-white px-6 md:px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-[#2563eb] transition-colors"
-            >
-              Portfolio <ArrowUpRight className="w-4 h-4" />
-            </a>
-            <a 
-              href="#contact"
-              className="text-zinc-300 px-6 md:px-8 py-3 rounded-full font-semibold hover:text-white transition-colors"
-            >
-              Hire me
-            </a>
-          </div>
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            className="fixed inset-0 z-[100] bg-[#02060d] p-6 flex flex-col font-serif"
+          >
+            <div className="flex justify-between items-center mb-12">
+              <div className="text-xl italic tracking-wide">{user?.fullName?.split(' ')[0] || "Noori"}.</div>
+              <button onClick={() => setIsMenuOpen(false)} className="text-white p-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-300"><X size={32} /></button>
+            </div>
+            <div className="flex flex-col gap-8 text-4xl">
+              {navItems.map((item) => (
+                <a key={item.label} href={item.href} onClick={() => setIsMenuOpen(false)} className="hover:text-blue-500 transition-colors duration-300">{item.label}</a>
+              ))}
+            </div>
+            <div className="mt-auto w-full">
+              <button className="w-full border border-white/20 text-white py-5 rounded-full text-xl mt-8 hover:bg-blue-600 hover:border-blue-600 transition-all duration-300 font-sans font-medium">
+                Book a Call
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-          {/* Social Icons mapped from API directly like your original code */}
-          <div className="flex gap-4 md:gap-6 bg-[#1A1A1A]/60 backdrop-blur-md px-6 py-3 rounded-full border border-zinc-700 shadow-sm">
-            <a href={user?.instagramURL || "https://www.instagram.com/"} target="_blank" rel="noreferrer" className="group">
-              <div className="bg-[#2A2A2A] p-2 rounded-full shadow-sm group-hover:-translate-y-1 group-hover:shadow-md transition-all duration-300">
-                <Instagram className="w-5 h-5 text-pink-400" />
-              </div>
-            </a>
-            <a href={user?.facebookURL || "https://www.facebook.com/"} target="_blank" rel="noreferrer" className="group">
-              <div className="bg-[#2A2A2A] p-2 rounded-full shadow-sm group-hover:-translate-y-1 group-hover:shadow-md transition-all duration-300">
-                <Facebook className="w-5 h-5 text-blue-400" />
-              </div>
-            </a>
-            <a href={user?.linkedInURL || "https://www.linkedin.com/"} target="_blank" rel="noreferrer" className="group">
-              <div className="bg-[#2A2A2A] p-2 rounded-full shadow-sm group-hover:-translate-y-1 group-hover:shadow-md transition-all duration-300">
-                <Linkedin className="w-5 h-5 text-sky-400" />
-              </div>
-            </a>
-            <a href={user?.twitterURL || "https://twitter.com/"} target="_blank" rel="noreferrer" className="group">
-              <div className="bg-[#2A2A2A] p-2 rounded-full shadow-sm group-hover:-translate-y-1 group-hover:shadow-md transition-all duration-300">
-                <Twitter className="w-5 h-5 text-white" />
-              </div>
-            </a>
-            <a href={user?.githubURL || "https://github.com/"} target="_blank" rel="noreferrer" className="group">
-              <div className="bg-[#2A2A2A] p-2 rounded-full shadow-sm group-hover:-translate-y-1 group-hover:shadow-md transition-all duration-300">
-                <Github className="w-5 h-5 text-zinc-300" />
-              </div>
-            </a>
-          </div>
-        </motion.div>
-
-      </motion.div>
-    </section>
+    </div>
   );
 };
 

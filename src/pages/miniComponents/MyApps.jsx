@@ -7,25 +7,41 @@ const MyApps = () => {
   const [apps, setApps] = useState([]);
   const [selectedApp, setSelectedApp] = useState(null);
 
+  const fallbackApps = [
+    { _id: "app-1", name: "Campaign Hub", svg: { url: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=200&q=80" } },
+    { _id: "app-2", name: "Growth Tracker", svg: { url: "https://images.unsplash.com/photo-1523475496153-3d6cc4a1f7e2?auto=format&fit=crop&w=200&q=80" } },
+    { _id: "app-3", name: "Insight Board", svg: { url: "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=200&q=80" } },
+    { _id: "app-4", name: "Ad Optimizer", svg: { url: "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=200&q=80" } }
+  ];
+
   useEffect(() => {
     getApps();
   }, []);
 
   const getApps = async () => {
-    const { data } = await axios.get(
-      "https://backend-beta-ruby-13.vercel.app/api/v1/softwareapplication/getall",
-      { withCredentials: true }
-    );
-    setApps(data.softwareApplications);
+    try {
+      const { data } = await axios.get(
+        "https://backend-beta-ruby-13.vercel.app/api/v1/softwareapplication/getall",
+        { withCredentials: true }
+      );
+      setApps(data.softwareApplications || fallbackApps);
+    } catch (error) {
+      console.warn("MyApps fetch failed, using fallback apps", error.message);
+      setApps(fallbackApps);
+    }
   };
 
   // 💾 SAVE ORDER TO BACKEND
   const saveOrder = async (newOrder) => {
-    await axios.post(
-      "https://backend-beta-ruby-13.vercel.app/api/v1/softwareapplication/reorder",
-      { apps: newOrder },
-      { withCredentials: true }
-    );
+    try {
+      await axios.post(
+        "https://backend-beta-ruby-13.vercel.app/api/v1/softwareapplication/reorder",
+        { apps: newOrder },
+        { withCredentials: true }
+      );
+    } catch (error) {
+      console.warn("Unable to save app order due to network/CORS", error.message);
+    }
   };
 
   // 🔥 DRAG HANDLER
@@ -39,11 +55,11 @@ const MyApps = () => {
   };
 
   return (
-    <div className="w-full flex flex-col gap-8 py-10">
+    <div id="myapp" className="w-full flex flex-col gap-8 py-10">
 
       {/* TITLE */}
-      <h1 className="text-[2rem] sm:text-[2.75rem] md:text-[3rem] lg:text-[3.8rem] font-extrabold mx-auto text-orange-500">
-        MY APPS
+      <h1 className="text-[2rem] sm:text-[2.75rem] md:text-[3rem] lg:text-[3.8rem] font-serif font-extrabold mx-auto text-sky-500">
+        <span className="text-white">My</span> Services
       </h1>
 
       {/* GRID */}
@@ -70,7 +86,7 @@ const MyApps = () => {
             <Card
               className="relative p-5 flex flex-col items-center gap-3
               bg-white/5 border border-white/10 backdrop-blur-lg
-              hover:border-orange-400 transition"
+              hover:border-sky-500 transition"
               onClick={() => setSelectedApp(app)}
             >
 
@@ -86,7 +102,7 @@ const MyApps = () => {
                 />
               </motion.div>
 
-              <p className="text-white text-sm">{app.name}</p>
+              <p className="font-serif text-white text-sm">{app.name}</p>
 
             </Card>
 
@@ -106,7 +122,7 @@ const MyApps = () => {
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.8 }}
-              className="bg-[#0b0f19] p-6 rounded-xl border border-orange-400 text-center"
+              className="bg-[#0b0f19] p-6 rounded-xl border border-sky-500 text-center"
               onClick={(e) => e.stopPropagation()}
             >
               <img
@@ -119,7 +135,7 @@ const MyApps = () => {
               </h2>
 
               <button
-                className="mt-4 px-4 py-1.5 bg-orange-500 text-white rounded"
+                className="mt-4 px-4 py-1.5 bg-sky-500 text-white rounded"
                 onClick={() => setSelectedApp(null)}
               >
                 Close

@@ -2,13 +2,13 @@ export default function Footer() {
   return (
     <footer style={{
       padding: '2rem 5%',
-      borderTop: '1px solid rgba(255,140,0,0.1)',
+      borderTop: '1px solid rgba(56,189,248,0.15)',
       display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       flexWrap: 'wrap', gap: '1rem',
     }}>
-      <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: '#ff8c00', fontSize: '1rem' }}>
-        &lt;M M Noori  /&gt;
-      </span>
+      <a href="https://akbaru.vercel.app/" target="blank"><span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: '#0ea5e9', fontSize: '1rem' }}>
+        Developed By &lt;AKBARUU /&gt;
+      </span></a>
       <p style={{ fontFamily: "'DM Sans', sans-serif", color: '#4a5568', fontSize: '0.85rem', margin: 0 }}>
         © 2026 M M noori. Copyright. All rights reserved.
       </p>
@@ -18,7 +18,7 @@ export default function Footer() {
           fontSize: '0.8rem', textDecoration: 'none',
           transition: 'color 0.2s',
         }}
-          onMouseEnter={e => e.target.style.color = '#ff8c00'}
+          onMouseEnter={e => e.target.style.color = '#0ea5e9'}
           onMouseLeave={e => e.target.style.color = '#4a5568'}
         >
           LinkedIn
@@ -28,7 +28,7 @@ export default function Footer() {
           fontSize: '0.8rem', textDecoration: 'none',
           transition: 'color 0.2s',
         }}
-          onMouseEnter={e => e.target.style.color = '#ff8c00'}
+          onMouseEnter={e => e.target.style.color = '#0ea5e9'}
           onMouseLeave={e => e.target.style.color = '#4a5568'}
         >
           GitHub
@@ -38,7 +38,7 @@ export default function Footer() {
           fontSize: '0.8rem', textDecoration: 'none',
           transition: 'color 0.2s',
         }}
-          onMouseEnter={e => e.target.style.color = '#ff8c00'}
+          onMouseEnter={e => e.target.style.color = '#0ea5e9'}
           onMouseLeave={e => e.target.style.color = '#4a5568'}
         >
           Instagram

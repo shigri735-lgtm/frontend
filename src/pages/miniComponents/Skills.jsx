@@ -7,6 +7,12 @@ const Skills = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const fallbackSkills = [
+    { _id: "s-1", title: "React", proficiency: "90", svg: { url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" } },
+    { _id: "s-2", title: "Node.js", proficiency: "85", svg: { url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" } },
+    { _id: "s-3", title: "Tailwind", proficiency: "80", svg: { url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-plain.svg" } }
+  ];
+
   useEffect(() => {
     const getMySkills = async () => {
       try {
@@ -14,11 +20,11 @@ const Skills = () => {
           "https://backend-beta-ruby-13.vercel.app/api/v1/skill/getall",
           { withCredentials: true }
         );
-        setSkills(data.skills);
-        setLoading(false);
+        setSkills(data.skills || fallbackSkills);
       } catch (err) {
-        console.error("Error fetching skills:", err);
-        setError("Failed to load skills");
+        console.error("Error fetching skills, using fallback:", err.message);
+        setSkills(fallbackSkills);
+      } finally {
         setLoading(false);
       }
     };
@@ -38,12 +44,12 @@ const Skills = () => {
         transition={{ duration: 0.6 }}
         className="text-center mb-16"
       >
-        <p className="uppercase text-xs tracking-[6px] text-orange-400 mb-2">
+        <p className="uppercase text-xs tracking-[6px] text-sky-400 mb-2">
           What I Know
         </p>
 
         <h1 className="text-4xl md:text-5xl font-extrabold">
-          My <span className="text-orange-500">Skills</span>
+          My <span className="text-sky-500">Skills</span>
         </h1>
 
         <p className="text-gray-400 mt-3 text-sm">
@@ -71,7 +77,7 @@ const Skills = () => {
               whileTap={{ scale: 0.97 }}
 
               className="bg-white/5 border border-white/10 rounded-xl p-5 
-              backdrop-blur-lg hover:border-orange-400 transition duration-300"
+              backdrop-blur-lg hover:border-sky-500 transition duration-300"
             >
 
               {/* Top */}
@@ -84,7 +90,7 @@ const Skills = () => {
 
                 <h2 className="font-semibold">{skill.title}</h2>
 
-                <span className="ml-auto text-sm text-orange-400 font-bold">
+                <span className="ml-auto text-sm text-sky-400 font-bold">
                   {pct}%
                 </span>
               </div>
@@ -95,7 +101,7 @@ const Skills = () => {
                   initial={{ width: 0 }}
                   whileInView={{ width: `${pct}%` }}
                   transition={{ duration: 1, ease: "easeOut" }}
-                  className="h-full bg-gradient-to-r from-orange-500 to-orange-400 rounded-full"
+                  className="h-full bg-gradient-to-r from-sky-500 to-sky-400 rounded-full"
                 />
               </div>
 
