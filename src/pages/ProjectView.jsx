@@ -58,19 +58,19 @@ const ProjectView = () => {
         {/* TOP BAR */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-wider">
-            PROJECT <span className="text-orange-500">DETAIL</span>
+            PROJECT <span className="text-sky-500">DETAIL</span>
           </h1>
 
           <Button
             onClick={handleReturnToPortfolio}
-            className="bg-orange-500 hover:bg-orange-600"
+            className="bg-sky-500 hover:bg-sky-600"
           >
             Back
           </Button>
         </div>
 
         {/* CARD */}
-        <div className="bg-white/5 border border-orange-500/20 rounded-2xl overflow-hidden shadow-lg backdrop-blur-xl">
+        <div className="bg-white/5 border border-sky-500/20 rounded-2xl overflow-hidden shadow-lg backdrop-blur-xl">
 
           {/* IMAGE */}
           <div className="w-full h-[250px] md:h-[350px] overflow-hidden">
@@ -88,7 +88,7 @@ const ProjectView = () => {
           <div className="p-6 md:p-10 space-y-8">
 
             {/* TITLE */}
-            <h2 className="text-2xl md:text-3xl font-bold text-orange-400">
+            <h2 className="text-2xl md:text-3xl font-bold text-sky-400">
               {title}
             </h2>
 
@@ -113,7 +113,7 @@ const ProjectView = () => {
                 {technologiesList.map((item, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 text-sm rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20"
+                    className="px-3 py-1 text-sm rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20"
                   >
                     {item}
                   </span>
@@ -142,7 +142,7 @@ const ProjectView = () => {
               <a
                 href={gitRepoLink}
                 target="_blank"
-                className="p-4 rounded-xl border border-orange-500/30 hover:border-orange-500 text-orange-400 transition break-all"
+                className="p-4 rounded-xl border border-sky-500/30 hover:border-sky-500 text-sky-400 transition break-all"
               >
                 GitHub Repository →
               </a>
@@ -150,7 +150,7 @@ const ProjectView = () => {
               <a
                 href={projectLink}
                 target="_blank"
-                className="p-4 rounded-xl border border-orange-500/30 hover:border-orange-500 text-orange-400 transition break-all"
+                className="p-4 rounded-xl border border-sky-500/30 hover:border-sky-500 text-sky-400 transition break-all"
               >
                 Live Project →
               </a>
