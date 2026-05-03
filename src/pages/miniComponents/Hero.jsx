@@ -360,7 +360,9 @@ const Hero = () => {
             <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
               <button className="group relative flex items-center justify-center gap-2 border border-white/30 text-white px-8 py-4 rounded-full font-medium overflow-hidden transition-all active:scale-95 font-sans">
                 <div className="absolute inset-0 bg-blue-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-0" />
-                <span className="relative z-10 group-hover:text-white transition-colors duration-300">Get a Free Marketing Audit</span>
+                <a href="https://wa.me/923312686870" target="_blank" rel="noopener noreferrer">
+                  <span className="relative z-10 group-hover:text-white transition-colors duration-300">Get a Free Marketing Audit</span>
+                </a>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform relative z-10" />
               </button>
               
@@ -420,7 +422,7 @@ const Hero = () => {
                 
                 <div className="absolute bottom-10 left-8 z-20 font-sans">
                     <div className="bg-[#0a0a0a]/80 backdrop-blur-md px-4 py-2 rounded-lg border border-white/10">
-                        <p className="text-sm font-medium text-white">Hi, I'm {user?.fullName || "Akbar Ali"} 👋</p>
+                        <p className="text-sm font-medium text-white">Hi, I'm {user?.fullName || "MM_Noori"} 👋</p>
                         <p className="text-xs text-blue-500 font-semibold uppercase tracking-widest">Growth Expert</p>
                     </div>
                 </div>
@@ -450,9 +452,11 @@ const Hero = () => {
               ))}
             </div>
             <div className="mt-auto w-full">
-              <button className="w-full border border-white/20 text-white py-5 rounded-full text-xl mt-8 hover:bg-blue-600 hover:border-blue-600 transition-all duration-300 font-sans font-medium">
-                Book a Call
-              </button>
+              <a href="https://wa.me/923312686870" target="_blank" rel="noopener noreferrer">
+                <button className="w-full border border-white/20 text-white py-5 rounded-full text-xl mt-8 hover:bg-blue-600 hover:border-blue-600 transition-all duration-300 font-sans font-medium">
+                  Book a Call
+                </button>
+              </a>
             </div>
           </motion.div>
         )}
