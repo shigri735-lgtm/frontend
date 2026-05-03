@@ -11,7 +11,7 @@ const Skills = () => {
     const getMySkills = async () => {
       try {
         const { data } = await axios.get(
-          "https://my-portfolio-rose-two-59.vercel.app/api/v1/skill/getall",
+          "https://backend-beta-ruby-13.vercel.app/api/v1/skill/getall",
           { withCredentials: true }
         );
         setSkills(data.skills);

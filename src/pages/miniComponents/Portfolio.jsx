@@ -20,7 +20,7 @@
 //   useEffect(() => {
 //     const getMyProjects = async () => {
 //       const { data } = await axios.get(
-//         "https://my-portfolio-rose-two-59.vercel.app/api/v1/project/getall",
+//         "https://backend-beta-ruby-13.vercel.app/api/v1/project/getall",
 //         { withCredentials: true }
 //       );
 //       setProjects(data.projects);
@@ -191,7 +191,7 @@ const Portfolio = () => {
   useEffect(() => {
     const getMyProjects = async () => {
       const { data } = await axios.get(
-        "https://my-portfolio-rose-two-59.vercel.app/api/v1/project/getall",
+        "https://backend-beta-ruby-13.vercel.app/api/v1/project/getall",
         { withCredentials: true }
       );
       setProjects(data.projects);

@@ -8,7 +8,7 @@ const Timeline = () => {
   useEffect(() => {
     const getMyTimeline = async () => {
       const { data } = await axios.get(
-        "https://my-portfolio-rose-two-59.vercel.app/api/v1/timeline/getall",
+        "https://backend-beta-ruby-13.vercel.app/api/v1/timeline/getall",
         { withCredentials: true }
       );
       setTimeline(data.timelines);

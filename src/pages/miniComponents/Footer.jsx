@@ -7,10 +7,10 @@ export default function Footer() {
       flexWrap: 'wrap', gap: '1rem',
     }}>
       <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: '#ff8c00', fontSize: '1rem' }}>
-        &lt;AkbarU  /&gt;
+        &lt;M M Noori  /&gt;
       </span>
       <p style={{ fontFamily: "'DM Sans', sans-serif", color: '#4a5568', fontSize: '0.85rem', margin: 0 }}>
-        © 2026 AkbarU. Copyright. All rights reserved.
+        © 2026 M M noori. Copyright. All rights reserved.
       </p>
       <div style={{ display: 'flex', gap: '1rem' }}>
         <a href="https://www.linkedin.com/in/akbaraliduhavi28/" style={{
