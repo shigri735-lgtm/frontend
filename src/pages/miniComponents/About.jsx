@@ -202,7 +202,7 @@ const About = () => {
         className="text-center mb-20"
       >
         <p className="uppercase text-sm tracking-[5px] text-blue-400 mb-2">
-          ✦ Who I Am
+          ✦ Who Am I
         </p>
 
         <h1 className="text-4xl md:text-5xl font-extrabold">
